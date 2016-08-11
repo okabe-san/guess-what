@@ -1,0 +1,65 @@
+header h1 {
+  color: #fff;
+  font-family: 'Permanent Marker', cursive;
+}
+
+h1 small {
+  color: #fff;
+}
+
+h2, h3, h4 {
+  font-family: 'Josefin Slab', serif;
+}
+
+h2 {
+  color: #004b66;
+}
+
+h3 {
+  color: #fff;
+  padding: 5px;
+  background: #004b66;
+}
+
+h4 {
+  color: #004b66;
+  font-weight: bold;
+}
+
+body {
+  padding: 20px 40px;
+  background: #fff;
+}
+
+body::after {
+  content: "";
+  background: url(../covers.jpg);
+  opacity: 0.05;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+}
+
+header {
+  padding: 20px 0 40px;
+  background: #004b66;
+}
+
+main, aside {
+  margin: 40px 0;
+}
+
+footer {
+  margin-top: 40px;
+  padding: 40px 0 5px;
+  background: #004b66;
+  color: #fff;
+}
+
+img {
+  padding: 5px;
+  border: 1px solid #004b66;
+}
