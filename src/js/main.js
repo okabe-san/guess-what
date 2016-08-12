@@ -24,7 +24,7 @@ $(document).ready(function () {
 function getPage(year) {
   return new Promise(function(resolve, reject) {
     $.ajax({
-      url:'http://www.omdbapi.com/?s=all&type=movie&y=' + year,
+      url:'http://www.omdbapi.com/?s=all&type=movie&y=' + year, // URL year
       method: 'get'
     })
     .done(function(data){
@@ -42,7 +42,7 @@ function getPage(year) {
 function getMovieTitle(pageNum) {
   return new Promise(function(resolve, reject) {
     $.ajax({
-      url: 'http://www.omdbapi.com/?s=all&type=movie&y=' + pageNum,
+      url: 'http://www.omdbapi.com/?s=all&type=movie&y=' + pageNum, // URL page
       method: 'get'
     })
     .done(function(title) {
@@ -62,26 +62,32 @@ function getMovieTitle(pageNum) {
   });
 }
 
+var counter = 0;
+function countRequest() {
+  return counter += 1;
+}
+
 function getMoveGenre(movieTitle) {
   return new Promise(function(resolve, reject) {
     $.ajax({
-      url:'http://www.omdbapi.com/?t=' + newUrl,
+      url:'http://www.omdbapi.com/?t=' + newUrl, // URL title
       method: 'get'
     }).done(function(movie) {
       resolve(movie);
-      if ((movie.Genre !== 'Adult') && (movie.Country === 'USA') && (movie.Poster !== 'N/A')) {
+      if ((movie.Genre !== 'Adult') && (movie.Country === 'USA')) {
         checkPass(movie);
+        checkPoster(movie);
         resolve(movieTitle);
         console.log(movie);
       } else {
-        getPage($('#year').val())
-        .then(function (pageNum) {
-          return getMovieTitle(pageNum);
-        })
-        .then(function (movieTitle) {
-          return getMoveGenre(movieTitle);
-        });
-      }
+          getPage($('#year').val())
+          .then(function (pageNum) {
+            return getMovieTitle(pageNum);
+          })
+          .then(function (movieTitle) {
+            return getMoveGenre(movieTitle);
+          });
+        }
     });
   });
 }
@@ -90,9 +96,17 @@ function checkPass(movie) {
   $('#replace').show(); // show movie title
   $('#genre').append('<h4>' + movie.Genre + '</h4>');
   $('#hint').append('<h4>' + movie.Actors + '</h4>');
+  $('#hint2').append('<h4>' + movie.Director + '</h4>');
   console.log(movieTitle);
-  var time = movieTitle.length * 2500;
-  $('<img src="' + movie.Poster + '"/>').appendTo('#cover').hide().fadeIn(time);
+}
+
+function checkPoster(movie) {
+  if (movie.Poster !== 'N/A') {
+    var time = movieTitle.length * 2500;
+    $('<img src="' + movie.Poster + '"/>').appendTo('#cover').hide().fadeIn(time);
+  } else {
+    $('#cover').append('<h4>No poster for this movie</h4>');
+  }
 }
 
 function showText(text, index) {
@@ -114,7 +128,6 @@ function replace(movieTitle) {
 /* answer check and score count */
 var score = 0;
 var count = 0;
-
 function checkAnswer() {
   if (movieTitle === $('#answer').val()) {
     countQuestion();
@@ -122,12 +135,10 @@ function checkAnswer() {
     refreshDiv();
     // change quize numbers at here
     if (count === 2) {
-      alert ('Well done!!!');
-      finalScoreScreen();
-      // window.location.replace('./score.html'); // move to final score page
+      message('Well done!');
+      finalScoreScreen(); // geme is done. go to final score screen.
     } else {
-      alert ('You Got It!');
-      // console.log(count);
+      message('You got it!');
       getPage($('#year').val())
       .then(function(pageNum) {
         return getMovieTitle(pageNum);
@@ -140,12 +151,19 @@ function checkAnswer() {
       });
     }
   } else {
-    alert ('Sorry... Wrong Answer');
+    message('Wrong anser... Try again.');
   }
 }
 
+/* messages for the answer */
+function message(messageText) {
+  $('#message').empty();
+  $('#message').html('<h1>' + messageText + '<h1>');
+  $('#message').fadeOut(10000);
+}
+
 function refreshDiv() {
-  $('#replace, #genre, #score, #hint, #cover').empty();
+  $('#replace, #genre, #score, #hint, #hint2, #cover').empty();
   $('#answer').val('');
   $('#score').append(score);
 }
@@ -162,19 +180,17 @@ function countQuestion() {
 }
 
 function finalScoreScreen() {
-  $('#scoreFinal, #scoreImage').empty();
+  $('#scoreFinal, #scoreFinalMessage').empty();
   $('#scoreFinal').html('<h2>Your Final Score Is: <br>' + '<h1>' + score + '</h1></h2><br><h2>Would you like to paly again?<br><h1>' );
   $('#restart').show();
-  gifAnimation();
+  finalMessage();
 }
 
-function gifAnimation() {
-  if (score < 50) {
-    $('#scoreImage').html('<h2>I don\'t know what are you thinking... Study a couple weeks then comeback please.</h2>');
-    $('<img src="image1.gif"/>').appendTo('#scoreImage').hide().fadeIn(1000);
-  } if (score >= 50 && score < 200) {
-    $('#scoreImage').html('<h2>Not too bad but you can do better! Study harder please.</h2>');
-    $('<img src="image1.gif"/>').appendTo('#scoreImage').hide().fadeIn(1000);
+function finalMessage() {
+  if (score < 70) {
+    $('#scoreFinalMessage').html('<h1>NOOOOO!!!<br>Super low score...</h1>');
+  } else {
+    $('#scoreFinalMessage').html('<h1>Amazing!!! You are the champ.</h1>');
   }
 }
 
