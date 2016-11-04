@@ -24,7 +24,7 @@ $(document).ready(function () {
 function getPage(year) {
   return new Promise(function(resolve, reject) {
     $.ajax({
-      url:'http://www.omdbapi.com/?s=all&type=movie&y=' + year, // URL year
+      url:'https://www.omdbapi.com/?s=all&type=movie&y=' + year, // URL year
       method: 'get'
     })
     .done(function(data){
@@ -41,7 +41,7 @@ function getPage(year) {
 function getMovieTitle(pageNum) {
   return new Promise(function(resolve, reject) {
     $.ajax({
-      url: 'http://www.omdbapi.com/?s=all&type=movie&y=' + pageNum, // URL page
+      url: 'https://www.omdbapi.com/?s=all&type=movie&y=' + pageNum, // URL page
       method: 'get'
     })
     .done(function(title) {
@@ -68,7 +68,7 @@ function countRequest() {
 function getMoveGenre(movieTitle) {
   return new Promise(function(resolve, reject) {
     $.ajax({
-      url:'http://www.omdbapi.com/?t=' + newUrl, // URL title
+      url:'https://www.omdbapi.com/?t=' + newUrl, // URL title
       method: 'get'
     }).done(function(movie) {
       resolve(movie);
