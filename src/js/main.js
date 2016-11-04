@@ -29,7 +29,6 @@ function getPage(year) {
     })
     .done(function(data){
       var pageN = Math.ceil((Math.random() * data.totalResults) / 10); // randomly pick page number
-      // console.log(pageN);
       var pageNum = year + '&page=' + pageN;
       resolve(pageNum);
     })
@@ -46,7 +45,6 @@ function getMovieTitle(pageNum) {
       method: 'get'
     })
     .done(function(title) {
-      // console.log(pageNum);
       movieTitle = title.Search[Math.floor(Math.random() * title.Search.length)].Title;
       // randomly pick movie title
       movieTitleHidden = movieTitle.replace(/[a-z]/g, '_');
@@ -74,11 +72,10 @@ function getMoveGenre(movieTitle) {
       method: 'get'
     }).done(function(movie) {
       resolve(movie);
-      if ((movie.Genre !== 'Adult') && (movie.Country === 'USA')) {
+      if (movie.Genre !== 'Adult') {
         checkPass(movie);
         checkPoster(movie);
         resolve(movieTitle);
-        console.log(movie);
       } else {
           getPage($('#year').val())
           .then(function (pageNum) {
@@ -104,8 +101,6 @@ function checkPoster(movie) {
   if (movie.Poster !== 'N/A') {
     var time = movieTitle.length * 2500;
     $('<img src="' + movie.Poster + '"/>').appendTo('#cover').hide().fadeIn(time);
-  } else {
-    $('#cover').append('<h4>No poster for this movie</h4>');
   }
 }
 
@@ -122,7 +117,6 @@ function showText(text, index) {
 function replace(movieTitle) {
   var elem = document.getElementById('replace');
   elem.textContent = movieTitle;
-  // console.log(elem);
 }
 
 /* answer check and score count */
@@ -172,7 +166,6 @@ function scoreCount(num) {
   var elem = document.getElementById('replace').textContent;
   var textCount = (elem.replace(/_/g, '')).length;
   return score += Math.floor(((movieTitle.length - textCount) / movieTitle.length) * 100);
-  // console.log(score);
 }
 
 function countQuestion() {
@@ -187,7 +180,7 @@ function finalScoreScreen() {
 }
 
 function finalMessage() {
-  if (score < 70) {
+  if (score < 0) {
     $('#scoreFinalMessage').html('<h1>NOOOOO!!!<br>Super low score...</h1>');
   } else {
     $('#scoreFinalMessage').html('<h1>Amazing!!! You are the champ.</h1>');
